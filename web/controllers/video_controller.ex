@@ -82,4 +82,14 @@ defmodule Rumbl.VideoController do
   defp user_videos(user) do
     assoc(user, :videos)
   end
+
+  plug :load_categories when action in [:new, :create, :edit, :update]
+
+  defp load_categories(conn, _) do
+    categories = Repo.all(
+      from c in Rumbl.Category.alphabetical(),
+      select: { c.name, c.id }
+    )
+    assign(conn, :categories, categories)
+  end
 end
